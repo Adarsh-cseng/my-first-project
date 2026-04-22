@@ -74,7 +74,7 @@ def run_simulation(cycles=5):
         intersection.cycle()
 
     print("\n✅ Simulation Complete!")
-
+print("update")
 
 # Run it
 run_simulation(cycles=5)
