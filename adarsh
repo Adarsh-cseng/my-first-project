@@ -1,1 +1,80 @@
-urbanpulse_ai.html
+import time
+import random
+
+# Traffic Light Colors
+class TrafficLight:
+    def __init__(self, location):
+        self.location = location
+        self.states = ["RED", "GREEN", "YELLOW"]
+        self.current = 0  # Start with RED
+
+    def get_state(self):
+        return self.states[self.current]
+
+    def next_state(self):
+        self.current = (self.current + 1) % len(self.states)
+
+    def display(self):
+        state = self.get_state()
+        colors = {"RED": "🔴", "GREEN": "🟢", "YELLOW": "🟡"}
+        print(f"  {self.location}: {colors[state]} {state}")
+
+
+# Intersection with multiple lights
+class Intersection:
+    def __init__(self, name):
+        self.name = name
+        self.lights = {
+            "North": TrafficLight("North"),
+            "South": TrafficLight("South"),
+            "East":  TrafficLight("East"),
+            "West":  TrafficLight("West"),
+        }
+        # Offset East/West so they start GREEN when N/S is RED
+        self.lights["East"].current = 1
+        self.lights["West"].current = 1
+
+    def display(self):
+        print(f"\n=== {self.name} Intersection ===")
+        for light in self.lights.values():
+            light.display()
+
+    def cycle(self):
+        for light in self.lights.values():
+            light.next_state()
+
+
+# Vehicle simulation
+def simulate_vehicles(intersection):
+    directions = ["North", "South", "East", "West"]
+    vehicle_types = ["🚗 Car", "🚕 Taxi", "🚌 Bus", "🚛 Truck"]
+    direction = random.choice(directions)
+    vehicle = random.choice(vehicle_types)
+    state = intersection.lights[direction].get_state()
+
+    if state == "GREEN":
+        print(f"  ➡️  {vehicle} from {direction} is MOVING through.")
+    elif state == "RED":
+        print(f"  🛑 {vehicle} from {direction} is STOPPED.")
+    else:
+        print(f"  ⚠️  {vehicle} from {direction} is SLOWING DOWN.")
+
+
+# Main simulation
+def run_simulation(cycles=5):
+    intersection = Intersection("Main St & 1st Ave")
+
+    print("🚦 Traffic Control System Started!\n")
+
+    for i in range(cycles):
+        print(f"\n--- Cycle {i + 1} ---")
+        intersection.display()
+        simulate_vehicles(intersection)
+        time.sleep(2)
+        intersection.cycle()
+
+    print("\n✅ Simulation Complete!")
+
+
+# Run it
+run_simulation(cycles=5)
